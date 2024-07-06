@@ -2,6 +2,7 @@ package org.acme.controller;
 
 import org.acme.domain.dto.PersonaDTO;
 import org.acme.util.JsonHandler;
+import org.acme.util.annotations.CommonLogging;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.inject.Inject;
@@ -40,7 +41,8 @@ public class ExampleResource {
     }
 
 
-    private PersonaDTO getPersona(String nombre, String apellido, Integer edad){
+    @CommonLogging
+    public PersonaDTO getPersona(String nombre, String apellido, Integer edad){
         return new PersonaDTO(nombre, apellido, edad);
     }
 
