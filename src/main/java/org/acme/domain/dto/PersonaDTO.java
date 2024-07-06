@@ -1,5 +1,8 @@
 package org.acme.domain.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class PersonaDTO {
     private String nombre;
     private String apellido;
