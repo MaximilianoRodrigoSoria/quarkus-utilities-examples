@@ -13,7 +13,7 @@ public class CustomMain {
     public  static class CustomAPP implements QuarkusApplication{
         @Override
         public int run(String... args) throws Exception {
-            System.out.println("Running custom app.......lll");
+            System.out.println("Running custom app.......");
             Quarkus.waitForExit();
             return 0;
         }

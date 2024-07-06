@@ -1,5 +1,7 @@
 package org.acme.controller;
 
+import org.acme.config.exception.CustomConflict2Exception;
+import org.acme.config.exception.CustomConflictException;
 import org.acme.domain.dto.PersonaDTO;
 import org.acme.util.JsonHandler;
 import org.acme.util.XmlHandler;
@@ -23,7 +25,7 @@ public class ExampleResource {
     @Inject
     XmlHandler xmlHandler;
 
-    @ConfigProperty(name="greeting")
+    @ConfigProperty(name = "greeting")
     private String greeting;
 
     private static final Logger LOGGER = Logger.getLogger(ExampleResource.class.getName());
@@ -41,13 +43,13 @@ public class ExampleResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("custom/{name}")
-    public String customHello(@PathParam("name") String name){
-        return  greeting + " " +name +" how are you doing?";
+    public String customHello(@PathParam("name") String name) {
+        return greeting + " " + name + " how are you doing?";
     }
 
 
     @CommonLogging
-    public PersonaDTO getPersona(String nombre, String apellido, Integer edad){
+    public PersonaDTO getPersona(String nombre, String apellido, Integer edad) {
         return new PersonaDTO(nombre, apellido, edad);
     }
 
@@ -60,5 +62,14 @@ public class ExampleResource {
         LOGGER.info("Persona to XML: " + xml);
         return xml;
     }
-
+    @GET
+    @Path("/exception")
+    @Produces(MediaType.TEXT_PLAIN)
+    @CommonLogging
+    public String exception() {
+        if (true) {
+            throw new CustomConflictException("Este es un mensaje de error personalizado 2");
+        }
+        return "Hello, World!";
+    }
 }
