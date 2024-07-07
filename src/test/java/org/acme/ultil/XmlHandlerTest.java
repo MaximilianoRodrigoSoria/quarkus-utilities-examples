@@ -1,14 +1,12 @@
 package org.acme.ultil;
 
-import org.acme.domain.dto.PersonaResponse;
 import org.acme.util.XmlHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class XmlHandlerTest {
 
@@ -54,6 +52,19 @@ class XmlHandlerTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
+    @Test
+    @DisplayName("fromXml correctly parses XML to ExampleResponse object")
+    void fromXmlCorrectlyParsesXMLToExampleResponseObject() throws Exception {
+        // Assemble
+        String xml = "<exampleResponse><nombre>Juan</nombre><apellido>Perez</apellido><edad>30</edad></exampleResponse>";
 
+        // Act
+        ExampleResponse result = xmlHandler.fromXml(xml, ExampleResponse.class);
 
+        // Assert
+        assertNotNull(result);
+        assertEquals("Juan", result.getNombre());
+        assertEquals("Perez", result.getApellido());
+        assertEquals(30, result.getEdad());
+    }
 }
