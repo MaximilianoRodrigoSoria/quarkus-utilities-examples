@@ -12,8 +12,10 @@ services:
     volumes:
       - ./db.scripts:/scripts
     command: /bin/bash -c "/scripts/setup.sh & /opt/mssql/bin/sqlservr"
+    networks:
+      - example-network
 
-  wiremock-examplehttp://localhost:9001/telefonos/info/[número_id]:
+  wiremock-example:
     container_name: wiremock-example
     image: rodolpheche/wiremock
     ports:
@@ -23,7 +25,20 @@ services:
       - ./wiremock/__files:/home/wiremock/__files
     command: --verbose
     networks:
-      - batch-network
+      - example-network
+
+  redis:
+    image: redis:latest
+    container_name: redis-example
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - example-network
+
+volumes:
+  redis-data:
 
 networks:
-  batch-network:
+  example-network:

@@ -7,6 +7,7 @@ import ar.com.laboratory.domain.entity.Persona;
 import ar.com.laboratory.domain.mappers.PersonaMapper;
 import ar.com.laboratory.domain.mappers.PersonaResponseMapper;
 import ar.com.laboratory.domain.repositories.PersonaRepository;
+import io.quarkus.cache.CacheResult;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -30,6 +31,7 @@ public class PersonaService implements AbstractService<PersonaDTO, PersonaRespon
     @Inject
     PersonaMapper mapper;
     @Override
+    @CacheResult(cacheName = "personas")
     public List<PersonaResponse> readAll() {
         return personaRepository.findAll().stream().map(mapperResponse::toResponse).collect(Collectors.toList());
     }
@@ -65,6 +67,7 @@ public PersonaResponse read(Long id){
             personaRepository.delete(id);
     }
 
+    @CacheResult(cacheName = "personas")
     private Persona findById(Long id){
         var persona = personaRepository.findById(id);
          if(Objects.isNull(persona)){
