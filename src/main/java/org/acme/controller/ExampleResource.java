@@ -1,19 +1,18 @@
 package org.acme.controller;
 
-import org.acme.config.exception.CustomConflict2Exception;
 import org.acme.config.exception.CustomConflictException;
 import org.acme.domain.dto.PersonaDTO;
+import org.acme.domain.dto.PersonaResponse;
+import org.acme.service.PersonaService;
 import org.acme.util.JsonHandler;
 import org.acme.util.XmlHandler;
 import org.acme.util.annotations.CommonLogging;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.logging.Logger;
 
 @Path("/api/v1/example")
@@ -24,6 +23,9 @@ public class ExampleResource {
 
     @Inject
     XmlHandler xmlHandler;
+
+    @Inject
+    PersonaService personaService;
 
     @ConfigProperty(name = "greeting")
     private String greeting;
@@ -42,7 +44,7 @@ public class ExampleResource {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("custom/{name}")
+    @Path("/custom/{name}")
     public String customHello(@PathParam("name") String name) {
         return greeting + " " + name + " how are you doing?";
     }
@@ -72,4 +74,14 @@ public class ExampleResource {
         }
         return "Hello, World!";
     }
+
+    @GET
+    @Path("/persona/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPersona(@PathParam("id") Long id) {
+            PersonaResponse persona = personaService.read(id);
+            return Response.ok(persona).build();
+
+    }
+
 }
