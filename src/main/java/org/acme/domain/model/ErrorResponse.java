@@ -1,9 +1,18 @@
 package org.acme.domain.model;
 
+
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+@Schema(description = "Representa la devolucion de un error")
 public class ErrorResponse {
+
+    @Schema(description = "Es el mensaje de error", example = "Persona no encontrada")
     private String errorMessage;
+
+    @Schema(description = "Es el codigo de error", example = "404")
     private Integer errorCode;
 
+    @Schema(description = "Es el tipo de error", example = "NOT_FOUND")
     private String errorType;
 
     public ErrorResponse(String errorMessage, Integer errorCode, String errorType) {

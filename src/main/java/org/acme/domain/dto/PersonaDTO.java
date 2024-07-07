@@ -1,12 +1,17 @@
 package org.acme.domain.dto;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
+@Schema(description = "Representa los datos de una persona")
 public class PersonaDTO {
+    @Schema(description = "Es el nombre de una persona", example = "Juan")
     private String nombre;
+    @Schema(description = "Es el apellido de una persona", example = "Perez")
     private String apellido;
-
+    @Schema(description = "Es la edad de una persona", example = "30")
     private Integer edad;
 
     public PersonaDTO() {
