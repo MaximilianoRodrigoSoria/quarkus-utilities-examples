@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public class PersonaService implements AbstractService<PersonaDTO, PersonaRespon
     @Inject
     PersonaResponseMapper mapperResponse;
 
+    @Inject
     PersonaMapper mapper;
     @Override
     public List<PersonaResponse> readAll() {
@@ -34,28 +36,27 @@ public class PersonaService implements AbstractService<PersonaDTO, PersonaRespon
 
     @Override
     public  PersonaResponse created(PersonaDTO request) {
+        log.info("PersonaDTO: {}", request);
         Persona persona = mapper.toEntity(request);
+        persona.setActive(true);
         return mapperResponse.toResponse(personaRepository.save(persona));
     }
 
 @Override
 public PersonaResponse read(Long id){
-    var persona = personaRepository.findById(id);
-    if(Objects.isNull(persona)){
-        log.error("Persona no encontrada con id: {}", id);
-        throw new PersonaNotFoundException("Persona no encontrada");
-    }else {
+    var persona = this.findById(id);
         return mapperResponse.toResponse(persona);
-    }
+
 }
 
     @Override
-    public PersonaResponse update(PersonaDTO request) {
-        Persona persona = personaRepository.findByNombreAndApellido(request.getNombre(), request.getApellido()).orElseThrow(() -> new PersonaNotFoundException("Persona no encontrada"));
+    public PersonaResponse update(Long id, PersonaDTO request) {
+        Persona persona = this.findById(id);
         persona.setNombre(request.getNombre());
         persona.setEdad(request.getEdad());
         persona.setApellido(request.getApellido());
-        return mapperResponse.toResponse(personaRepository.save(persona));
+        persona.setUpdatedAt(new Date());
+        return mapperResponse.toResponse(personaRepository.update(persona));
     }
 
     @Override
@@ -63,4 +64,11 @@ public PersonaResponse read(Long id){
             this.read(id);
             personaRepository.delete(id);
     }
+
+    private Persona findById(Long id){
+        var persona = personaRepository.findById(id);
+         if(Objects.isNull(persona)){
+             log.error("Persona no encontrada con id: {}", id);
+            throw new PersonaNotFoundException("Persona no encontrada"); }
+        return persona;}
 }

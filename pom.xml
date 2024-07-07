@@ -145,6 +145,11 @@
             <version>1.4.2.Final</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jsonb</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

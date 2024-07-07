@@ -32,8 +32,9 @@ public class PersonaRepository {
     }
 
     @Transactional
-    public void update(Persona persona) {
+    public Persona update(Persona persona) {
         entityManager.merge(persona);
+        return persona;
     }
 
     @Transactional
@@ -42,13 +43,5 @@ public class PersonaRepository {
         if (persona != null) {
             entityManager.remove(persona);
         }
-    }
-
-    @Transactional
-    public Optional<Persona> findByNombreAndApellido(String nombre, String apellido) {
-        TypedQuery<Persona> query = entityManager.createQuery("SELECT p FROM Persona p WHERE p.nombre = :nombre AND p.apellido = :apellido", Persona.class);
-        query.setParameter("nombre", nombre);
-        query.setParameter("apellido", apellido);
-        return Optional.of(query.getSingleResult());
     }
 }
