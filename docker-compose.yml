@@ -12,3 +12,18 @@ services:
     volumes:
       - ./db.scripts:/scripts
     command: /bin/bash -c "/scripts/setup.sh & /opt/mssql/bin/sqlservr"
+
+  wiremock-examplehttp://localhost:9001/telefonos/info/[número_id]:
+    container_name: wiremock-example
+    image: rodolpheche/wiremock
+    ports:
+      - "9001:8080"
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+      - ./wiremock/__files:/home/wiremock/__files
+    command: --verbose
+    networks:
+      - batch-network
+
+networks:
+  batch-network:

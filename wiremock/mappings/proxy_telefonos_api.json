@@ -1,0 +1,10 @@
+{
+  "request": {
+      "urlPattern": "/telefonos/info/.*",
+    "method": "GET"
+  },
+  "response": {
+    "proxyBaseUrl": "https://telefonos.com.ar"
+  },
+    "priority": 99
+}
