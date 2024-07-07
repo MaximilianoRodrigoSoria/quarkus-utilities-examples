@@ -1,6 +1,7 @@
 package ar.com.laboratory.service;
 
 import ar.com.laboratory.client.TelefonoClient;
+import ar.com.laboratory.config.exception.MaxRetriesException;
 import ar.com.laboratory.domain.model.TelefonoResponse;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -14,7 +15,7 @@ public class TelefonoInfoService {
     @RestClient
     TelefonoClient telefonoClient;
 
-    public TelefonoResponse getTelefonoInfo(int id) {
+    public TelefonoResponse getTelefonoInfo(int id) throws MaxRetriesException {
         return telefonoClient.getTelefonoInfo(id);
     }
 }

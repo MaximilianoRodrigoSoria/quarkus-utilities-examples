@@ -1,6 +1,7 @@
 package ar.com.laboratory.controller;
 
 
+import ar.com.laboratory.config.exception.MaxRetriesException;
 import ar.com.laboratory.domain.model.TelefonoResponse;
 import ar.com.laboratory.service.TelefonoInfoService;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -24,7 +25,7 @@ public class TelefonoResource {
     @GET
     @Path("/info/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response obtenerTelefono(@PathParam("id") int id) {
+    public Response obtenerTelefono(@PathParam("id") int id) throws MaxRetriesException {
         var telefonoResponse = telefonoInfoService.getTelefonoInfo(id);
         return Response.ok(telefonoResponse).build();
     }
