@@ -7,6 +7,7 @@ import ar.com.laboratory.domain.entity.Persona;
 import ar.com.laboratory.domain.mappers.PersonaMapper;
 import ar.com.laboratory.domain.mappers.PersonaResponseMapper;
 import ar.com.laboratory.domain.repositories.PersonaRepository;
+import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Slf4j
-public class PersonaService implements AbstractService<PersonaDTO, PersonaResponse, Long>{
+public class PersonaService implements AbstractService<PersonaDTO, PersonaResponse, Long> {
 
 
     @Inject
@@ -30,6 +31,7 @@ public class PersonaService implements AbstractService<PersonaDTO, PersonaRespon
 
     @Inject
     PersonaMapper mapper;
+
     @Override
     @CacheResult(cacheName = "personas")
     public List<PersonaResponse> readAll() {
@@ -37,21 +39,24 @@ public class PersonaService implements AbstractService<PersonaDTO, PersonaRespon
     }
 
     @Override
-    public  PersonaResponse created(PersonaDTO request) {
+    @CacheInvalidateAll(cacheName = "personas")
+    public PersonaResponse created(PersonaDTO request) {
         log.info("PersonaDTO: {}", request);
         Persona persona = mapper.toEntity(request);
         persona.setActive(true);
         return mapperResponse.toResponse(personaRepository.save(persona));
     }
 
-@Override
-public PersonaResponse read(Long id){
-    var persona = this.findById(id);
+    @Override
+    @CacheResult(cacheName = "personas")
+    public PersonaResponse read(Long id) {
+        var persona = this.findById(id);
         return mapperResponse.toResponse(persona);
 
-}
+    }
 
     @Override
+    @CacheInvalidateAll(cacheName = "personas")
     public PersonaResponse update(Long id, PersonaDTO request) {
         Persona persona = this.findById(id);
         persona.setNombre(request.getNombre());
@@ -62,16 +67,19 @@ public PersonaResponse read(Long id){
     }
 
     @Override
+    @CacheInvalidateAll(cacheName = "personas")
     public void delete(Long id) {
-            this.read(id);
-            personaRepository.delete(id);
+        this.read(id);
+        personaRepository.delete(id);
     }
 
     @CacheResult(cacheName = "personas")
-    private Persona findById(Long id){
+    public Persona findById(Long id) {
         var persona = personaRepository.findById(id);
-         if(Objects.isNull(persona)){
-             log.error("Persona no encontrada con id: {}", id);
-            throw new PersonaNotFoundException("Persona no encontrada"); }
-        return persona;}
+        if (Objects.isNull(persona)) {
+            log.error("Persona no encontrada con id: {}", id);
+            throw new PersonaNotFoundException("Persona no encontrada");
+        }
+        return persona;
+    }
 }
