@@ -1,5 +1,6 @@
 package ar.com.laboratory.config.exception.handler;
 
+import ar.com.laboratory.config.exception.IncompleteFlowException;
 import ar.com.laboratory.config.exception.PersonaNotFoundException;
 import ar.com.laboratory.config.exception.CustomConflictException;
 import ar.com.laboratory.domain.model.ErrorResponse;
@@ -18,7 +19,7 @@ public class GenericExceptionMapper implements ExceptionMapper<Exception> {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(new ErrorResponse(exception.getMessage(), Response.Status.NOT_FOUND.getStatusCode(), Response.Status.NOT_FOUND.name()))
                     .build();
-        } else if (exception instanceof CustomConflictException) {
+        } else if (exception instanceof CustomConflictException || exception instanceof IncompleteFlowException) {
             return Response.status(Response.Status.CONFLICT)
                     .entity(new ErrorResponse(exception.getMessage(), Response.Status.CONFLICT.getStatusCode(), Response.Status.CONFLICT.name()))
                     .build();

@@ -3,6 +3,8 @@ package ar.com.laboratory.controller;
 import ar.com.laboratory.config.exception.CustomConflictException;
 import ar.com.laboratory.domain.dto.PersonaDTO;
 import ar.com.laboratory.domain.dto.PersonaResponse;
+import ar.com.laboratory.domain.model.FullResponse;
+import ar.com.laboratory.service.AggregatorService;
 import ar.com.laboratory.service.PersonaService;
 import ar.com.laboratory.util.JsonHandler;
 import ar.com.laboratory.util.XmlHandler;
@@ -35,6 +37,9 @@ public class ExampleResource {
 
     @Inject
     PersonaService personaService;
+
+    @Inject
+    AggregatorService aggregatorService;
 
     @ConfigProperty(name = "greeting")
     private String greeting;
@@ -118,4 +123,13 @@ public class ExampleResource {
 
     }
 
+
+    @GET
+    @Path("/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    @CommonLogging
+    public Response fullResponse() {
+        FullResponse fullResponse = aggregatorService.aggregateResponses().join();
+        return Response.ok(fullResponse).build();
+    }
 }

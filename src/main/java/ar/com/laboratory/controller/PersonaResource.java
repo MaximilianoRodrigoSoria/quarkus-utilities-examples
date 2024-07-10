@@ -3,7 +3,6 @@ package ar.com.laboratory.controller;
 
 import ar.com.laboratory.domain.dto.PersonaDTO;
 import ar.com.laboratory.service.PersonaService;
-import ar.com.laboratory.util.JsonHandler;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
