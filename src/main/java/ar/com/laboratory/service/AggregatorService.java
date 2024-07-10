@@ -35,8 +35,8 @@ public class AggregatorService {
         // Lógica para llamar al servicio 3
         return CompletableFuture.supplyAsync(() -> {
             // Simulación de llamada al servicio
-            DatosDeContactoResponse response = new DatosDeContactoResponse("maximilianorodrigosoria@gmail.com","1127043256");
-            return null;
+            DatosDeContactoResponse datosDeContacto = new DatosDeContactoResponse("maximilianorodrigosoria@gmail.com","1127043256");
+            return datosDeContacto;
         });
     }
 
