@@ -82,7 +82,7 @@ public class CommonLoggingInterceptor {
         if (beforeLoggingActive.equals("true")) {
             LOGGER.info("\n");
             LOGGER.info("------------- REQUEST ----------------");
-            LOGGER.severe("Class: " + className);
+            LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
             LOGGER.info("Arguments: ");
             for (int i = 0; i < params.length; i++) {
