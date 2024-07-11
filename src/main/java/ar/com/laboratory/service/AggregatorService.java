@@ -8,7 +8,6 @@ import ar.com.laboratory.domain.model.DatosDeContactoResponse;
 import ar.com.laboratory.domain.model.DatosDeDocumentacionResponse;
 import ar.com.laboratory.domain.model.DatosPersonalesResponse;
 import ar.com.laboratory.domain.model.FullResponse;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Objects;
