@@ -49,21 +49,18 @@ public class CommonLoggingInterceptor {
 
     private void exceptionLogging(InvocationContext context, Exception e, String className, long duration) throws Exception {
         if (exceptionLoggingActive.equals("true")) {
-            LOGGER.severe("\n");
             LOGGER.severe("------------- EXCEPTION ----------------");
             LOGGER.severe("Class: " + className);
             LOGGER.severe("Method: " + context.getMethod().getName());
             LOGGER.severe("Excepcion: " + e.getMessage());
             LOGGER.severe("Execution time is: " + duration + " ms");
             LOGGER.severe("------------- EXCEPTION-END ----------------");
-            LOGGER.severe("\n");
         }
         throw e;
     }
 
     private void afterLogging(InvocationContext context, String className, Object result, long duration) {
         if (afterLoggingActive.equals("true")) {
-            LOGGER.info("\n");
             LOGGER.info("------------- RESPONSE ----------------");
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
@@ -74,13 +71,11 @@ public class CommonLoggingInterceptor {
                 LOGGER.info("El metodo no retorno ningun valor");
             }
             LOGGER.info("------------- RESPONSE-END ----------------");
-            LOGGER.info("\n");
         }
     }
 
     private void beforeLogging(InvocationContext context, String className, Object[] params, Parameter[] parameters) {
         if (beforeLoggingActive.equals("true")) {
-            LOGGER.info("\n");
             LOGGER.info("------------- REQUEST ----------------");
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
@@ -90,11 +85,10 @@ public class CommonLoggingInterceptor {
             } else {
                 for (int i = 0; i < params.length; i++) {
                     String paramName = parameters[i].getName();
-                    LOGGER.info(" " + paramName + " : " + params[i]);
+                    LOGGER.info("-" + paramName + " : " + params[i]);
                 }
             }
             LOGGER.info("------------- REQUEST-END ----------------");
-            LOGGER.info("\n");
         }
     }
 }
