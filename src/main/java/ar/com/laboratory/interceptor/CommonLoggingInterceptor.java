@@ -1,6 +1,5 @@
 package ar.com.laboratory.interceptor;
 
-
 import ar.com.laboratory.util.annotations.CommonLogging;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -29,6 +28,7 @@ public class CommonLoggingInterceptor {
 
     @AroundInvoke
     public Object logMethodInvocation(InvocationContext context) throws Exception {
+        long startTime = System.currentTimeMillis();
         if (Boolean.parseBoolean(active)) {
             String className = context.getMethod().getDeclaringClass().getName();
             Object[] params = context.getParameters();
@@ -36,34 +36,38 @@ public class CommonLoggingInterceptor {
             beforeLogging(context, className, params, parameters);
             try {
                 Object result = context.proceed();
-                afterLogging(context, className, result);
+                long endTime = System.currentTimeMillis();
+                afterLogging(context, className, result, endTime - startTime);
                 return result;
             } catch (Exception e) {
-                exceptionLogging(context, e, className);
+                long endTime = System.currentTimeMillis();
+                exceptionLogging(context, e, className, endTime - startTime);
             }
         }
         return context.proceed();
     }
 
-    private void exceptionLogging(InvocationContext context, Exception e, String className) throws Exception {
+    private void exceptionLogging(InvocationContext context, Exception e, String className, long duration) throws Exception {
         if (exceptionLoggingActive.equals("true"))  {
             LOGGER.severe("\n");
             LOGGER.severe("------------- EXCEPTION ----------------");
             LOGGER.severe("Class: " + className);
             LOGGER.severe("Method: " + context.getMethod().getName());
             LOGGER.severe("Excepcion: " + e.getMessage());
+            LOGGER.severe("Execution time is: " + duration + " ms");
             LOGGER.severe("------------- EXCEPTION-END ----------------");
             LOGGER.severe("\n");
         }
         throw e;
     }
 
-    private void afterLogging(InvocationContext context, String className, Object result) {
+    private void afterLogging(InvocationContext context, String className, Object result, long duration) {
         if (afterLoggingActive.equals("true")) {
             LOGGER.info("\n");
             LOGGER.info("------------- RESPONSE ----------------");
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
+            LOGGER.info("Execution time is: " + duration + " ms");
             if (result != null) {
                 LOGGER.info("Response: " + result.toString());
             } else {
@@ -81,7 +85,6 @@ public class CommonLoggingInterceptor {
             LOGGER.severe("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
             LOGGER.info("Arguments: ");
-            LOGGER.info("Active: " + active);
             for (int i = 0; i < params.length; i++) {
                 String paramName = parameters[i].getName();
                 LOGGER.info(paramName + " : " + params[i]);

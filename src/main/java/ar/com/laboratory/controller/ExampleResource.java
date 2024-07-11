@@ -71,6 +71,12 @@ public class ExampleResource {
 
     @CommonLogging
     public PersonaDTO getPersona(String nombre, String apellido, Integer edad) {
+        //retraso de 30 segundos
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return new PersonaDTO(nombre, apellido, edad);
     }
 
