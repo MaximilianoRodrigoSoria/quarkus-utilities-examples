@@ -48,7 +48,7 @@ public class CommonLoggingInterceptor {
     }
 
     private void exceptionLogging(InvocationContext context, Exception e, String className, long duration) throws Exception {
-        if (exceptionLoggingActive.equals("true"))  {
+        if (exceptionLoggingActive.equals("true")) {
             LOGGER.severe("\n");
             LOGGER.severe("------------- EXCEPTION ----------------");
             LOGGER.severe("Class: " + className);
@@ -85,9 +85,13 @@ public class CommonLoggingInterceptor {
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
             LOGGER.info("Arguments: ");
-            for (int i = 0; i < params.length; i++) {
-                String paramName = parameters[i].getName();
-                LOGGER.info(paramName + " : " + params[i]);
+            if (parameters.length == 0 ) {
+                LOGGER.info(" No parameters");
+            } else {
+                for (int i = 0; i < params.length; i++) {
+                    String paramName = parameters[i].getName();
+                    LOGGER.info(" " + paramName + " : " + params[i]);
+                }
             }
             LOGGER.info("------------- REQUEST-END ----------------");
             LOGGER.info("\n");
