@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.List;
@@ -43,7 +44,7 @@ public class CommonLoggingInterceptor {
             String className = context.getMethod().getDeclaringClass().getName();
             Object[] params = context.getParameters();
             Parameter[] parameters = context.getMethod().getParameters();
-            beforeLogging(context, className, params, parameters,sensitiveData);
+            beforeLogging(context, className, params, parameters, sensitiveData);
             try {
                 Object result = context.proceed();
                 long endTime = System.currentTimeMillis();
@@ -52,13 +53,14 @@ public class CommonLoggingInterceptor {
             } catch (Exception e) {
                 long endTime = System.currentTimeMillis();
                 exceptionLogging(context, e, className, endTime - startTime);
+                throw e;
             }
         }
         return context.proceed();
     }
 
     private void exceptionLogging(InvocationContext context, Exception e, String className, long duration) throws Exception {
-        if (exceptionLoggingActive.equals("true")) {
+        if (Boolean.parseBoolean(exceptionLoggingActive)) {
             LOGGER.severe("------------- EXCEPTION ----------------");
             LOGGER.severe("Class: " + className);
             LOGGER.severe("Method: " + context.getMethod().getName());
@@ -69,14 +71,15 @@ public class CommonLoggingInterceptor {
         throw e;
     }
 
-    private void afterLogging(InvocationContext context, String className, Object result, long duration, List<String> sensitiveData ) {
-        if (afterLoggingActive.equals("true")) {
+    private void afterLogging(InvocationContext context, String className, Object result, long duration, List<String> sensitiveData) {
+        if (Boolean.parseBoolean(afterLoggingActive)) {
             LOGGER.info("------------- RESPONSE ----------------");
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
             LOGGER.info("Execution time is: " + duration + " ms");
+            LOGGER.info("Response: ");
             if (result != null) {
-                LOGGER.info("Response: " + result.toString());
+                logResponse(result, sensitiveData);
             } else {
                 LOGGER.info("El metodo no retorno ningun valor");
             }
@@ -85,7 +88,7 @@ public class CommonLoggingInterceptor {
     }
 
     private void beforeLogging(InvocationContext context, String className, Object[] params, Parameter[] parameters, List<String> sensitiveData) {
-        if (beforeLoggingActive.equals("true")) {
+        if (Boolean.parseBoolean(beforeLoggingActive)) {
             LOGGER.info("------------- REQUEST ----------------");
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
@@ -137,6 +140,21 @@ public class CommonLoggingInterceptor {
             } catch (IllegalAccessException e) {
                 LOGGER.warning("  - Error accessing field " + field.getName() + ": " + e.getMessage());
             }
+        }
+    }
+
+    private static void logResponse(Object result, List<String> sensitiveData) {
+        if (result instanceof Response) {
+            Object entity = ((Response) result).getEntity();
+            if (isCompositeObject(entity)) {
+                logCompositeObjectFields(entity, sensitiveData);
+            } else {
+                LOGGER.info(entity.toString());
+            }
+        } else if (isCompositeObject(result)) {
+            logCompositeObjectFields(result, sensitiveData);
+        } else {
+            LOGGER.info(result.toString());
         }
     }
 }
