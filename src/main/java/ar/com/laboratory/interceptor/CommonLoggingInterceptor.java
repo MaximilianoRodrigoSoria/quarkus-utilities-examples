@@ -96,7 +96,6 @@ public class CommonLoggingInterceptor {
     }
 
     private static void logArguments(Object[] params, Parameter[] parameters, List<String> sensitiveData) {
-
         if (parameters.length == 0) {
             LOGGER.info("No parameters");
         } else {
@@ -106,20 +105,23 @@ public class CommonLoggingInterceptor {
 
                 if (paramValue != null && isCompositeObject(paramValue)) {
                     LOGGER.info(paramValue.getClass().getSimpleName());
-                    logCompositeObjectFields(paramValue);
+                    logCompositeObjectFields(paramValue, sensitiveData);
                 } else {
-                    LOGGER.info("- " + paramName + ": " + paramValue);
+                    if (sensitiveData.contains(paramName)) {
+                        LOGGER.info("- " + paramName + ": ***");
+                    } else {
+                        LOGGER.info("- " + paramName + ": " + paramValue);
+                    }
                 }
             }
         }
     }
 
     private static boolean isCompositeObject(Object obj) {
-        // Simple check to identify composite objects, adjust based on your needs
         return obj != null && !(obj instanceof String || obj instanceof Number || obj instanceof Boolean);
     }
 
-    private static void logCompositeObjectFields(Object obj) {
+    private static void logCompositeObjectFields(Object obj, List<String> sensitiveData) {
         Class<?> clazz = obj.getClass();
         Field[] fields = clazz.getDeclaredFields();
 
@@ -127,7 +129,11 @@ public class CommonLoggingInterceptor {
             field.setAccessible(true);
             try {
                 Object value = field.get(obj);
-                LOGGER.info("  - " + field.getName() + ": " + value);
+                if (sensitiveData.contains(field.getName())) {
+                    LOGGER.info("  - " + field.getName() + ": ***");
+                } else {
+                    LOGGER.info("  - " + field.getName() + ": " + value);
+                }
             } catch (IllegalAccessException e) {
                 LOGGER.warning("  - Error accessing field " + field.getName() + ": " + e.getMessage());
             }
