@@ -1,16 +1,24 @@
 package ar.com.laboratory.interceptor;
 
+
+import ar.com.laboratory.config.SensitiveDataConfig;
 import ar.com.laboratory.util.annotations.CommonLogging;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
+import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Parameter;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @Interceptor
 @CommonLogging
+@Priority(2)
 public class CommonLoggingInterceptor {
     private static final Logger LOGGER = Logger.getLogger(CommonLoggingInterceptor.class.getName());
 
@@ -25,6 +33,14 @@ public class CommonLoggingInterceptor {
 
     @ConfigProperty(name = "common.logging.exception.active", defaultValue = "true")
     String exceptionLoggingActive;
+
+
+    @Inject
+    SensitiveDataConfig sensitiveDataConfig;
+
+
+
+
 
     @AroundInvoke
     public Object logMethodInvocation(InvocationContext context) throws Exception {
@@ -85,7 +101,13 @@ public class CommonLoggingInterceptor {
             } else {
                 for (int i = 0; i < params.length; i++) {
                     String paramName = parameters[i].getName();
-                    LOGGER.info("-" + paramName + " : " + params[i]);
+                    Object paramValue = params[i];
+                    if (Objects.nonNull(sensitiveDataConfig.getSensitiveDataList())) {
+                        if(sensitiveDataConfig.getSensitiveDataList().contains(paramName)) {
+                            paramValue = "****";
+                        }
+                    }
+                    LOGGER.info("-" + paramName + " : " + paramValue);
                 }
             }
             LOGGER.info("------------- REQUEST-END ----------------");

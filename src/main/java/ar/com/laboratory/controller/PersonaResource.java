@@ -3,6 +3,7 @@ package ar.com.laboratory.controller;
 
 import ar.com.laboratory.domain.dto.PersonaDTO;
 import ar.com.laboratory.service.PersonaService;
+import ar.com.laboratory.util.annotations.CommonLogging;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -50,6 +51,7 @@ public class PersonaResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @CommonLogging
     public Response create(PersonaDTO personaDTO) {
         var persona = personaService.created(personaDTO);
         return Response.status(Response.Status.CREATED).entity(persona).build();

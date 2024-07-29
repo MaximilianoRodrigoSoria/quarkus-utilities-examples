@@ -1,0 +1,11 @@
+{
+  "acuerdoCuentaCorriente": "Acuerdo 123",
+  "descuentoCpd": 15000.0,
+  "leasingPrendaBienesA": "Leasing ABC",
+  "oferta": "APROBADA",
+  "prestamoAmortizable": "Préstamo 456",
+  "prestamoAmortizableConGtiaSgr": 25000.0,
+  "tarjetaCorporativa": "Tarjeta XYZ",
+  "topeAccPtmo": 50000.0,
+  "topeChequesSgrLeasingPrenda": 20000.0
+}

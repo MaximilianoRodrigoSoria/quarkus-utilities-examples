@@ -1,14 +1,14 @@
 {
   "request": {
     "method": "GET",
-    "urlPattern": "/telefonos/info/[0-9]+"
+    "urlPattern": "/telefonos/info/2"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "telefono_info_response.json",
+    "bodyFileName": "telefono_info_response2.json",
     "headers": {
       "Content-Type": "application/json"
     }
   },
-  "priority": 2
+  "priority": 1
 }
