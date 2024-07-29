@@ -85,18 +85,18 @@ public class CommonLoggingInterceptor {
     }
 
     private void beforeLogging(InvocationContext context, String className, Object[] params, Parameter[] parameters, List<String> sensitiveData) {
-        LOGGER.info("Sensitive data: " + sensitiveData.toString());
         if (beforeLoggingActive.equals("true")) {
             LOGGER.info("------------- REQUEST ----------------");
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
             LOGGER.info("Arguments: ");
-            logArguments(params, parameters);
+            logArguments(params, parameters, sensitiveData);
             LOGGER.info("------------- REQUEST-END ----------------");
         }
     }
 
-    private static void logArguments(Object[] params, Parameter[] parameters) {
+    private static void logArguments(Object[] params, Parameter[] parameters, List<String> sensitiveData) {
+
         if (parameters.length == 0) {
             LOGGER.info("No parameters");
         } else {
