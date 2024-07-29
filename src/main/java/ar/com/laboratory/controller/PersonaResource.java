@@ -59,6 +59,7 @@ public class PersonaResource {
 
     @PUT
     @Path("/persona/{id}")
+    @CommonLogging
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON) // Ensure this matches the client's Content-Type
     public Response update(@PathParam("id") Long id, PersonaDTO personaDTO) {

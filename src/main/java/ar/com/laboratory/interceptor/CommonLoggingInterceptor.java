@@ -1,19 +1,14 @@
 package ar.com.laboratory.interceptor;
 
-
-import ar.com.laboratory.config.SensitiveDataConfig;
 import ar.com.laboratory.util.annotations.CommonLogging;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 @Interceptor
@@ -33,14 +28,6 @@ public class CommonLoggingInterceptor {
 
     @ConfigProperty(name = "common.logging.exception.active", defaultValue = "true")
     String exceptionLoggingActive;
-
-
-    @Inject
-    SensitiveDataConfig sensitiveDataConfig;
-
-
-
-
 
     @AroundInvoke
     public Object logMethodInvocation(InvocationContext context) throws Exception {
@@ -96,21 +83,46 @@ public class CommonLoggingInterceptor {
             LOGGER.info("Class: " + className);
             LOGGER.info("Method: " + context.getMethod().getName());
             LOGGER.info("Arguments: ");
-            if (parameters.length == 0 ) {
-                LOGGER.info(" No parameters");
-            } else {
-                for (int i = 0; i < params.length; i++) {
-                    String paramName = parameters[i].getName();
-                    Object paramValue = params[i];
-                    if (Objects.nonNull(sensitiveDataConfig.getSensitiveDataList())) {
-                        if(sensitiveDataConfig.getSensitiveDataList().contains(paramName)) {
-                            paramValue = "****";
-                        }
-                    }
-                    LOGGER.info("-" + paramName + " : " + paramValue);
+            logArguments(params, parameters);
+            LOGGER.info("------------- REQUEST-END ----------------");
+        }
+    }
+
+    private static void logArguments(Object[] params, Parameter[] parameters) {
+        if (parameters.length == 0) {
+            LOGGER.info("No parameters");
+        } else {
+            for (int i = 0; i < params.length; i++) {
+                String paramName = parameters[i].getName();
+                Object paramValue = params[i];
+
+                if (paramValue != null && isCompositeObject(paramValue)) {
+                    LOGGER.info(paramValue.getClass().getSimpleName());
+                    logCompositeObjectFields(paramValue);
+                } else {
+                    LOGGER.info("- " + paramName + ": " + paramValue);
                 }
             }
-            LOGGER.info("------------- REQUEST-END ----------------");
+        }
+    }
+
+    private static boolean isCompositeObject(Object obj) {
+        // Simple check to identify composite objects, adjust based on your needs
+        return obj != null && !(obj instanceof String || obj instanceof Number || obj instanceof Boolean);
+    }
+
+    private static void logCompositeObjectFields(Object obj) {
+        Class<?> clazz = obj.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object value = field.get(obj);
+                LOGGER.info("  - " + field.getName() + ": " + value);
+            } catch (IllegalAccessException e) {
+                LOGGER.warning("  - Error accessing field " + field.getName() + ": " + e.getMessage());
+            }
         }
     }
 }
