@@ -1,14 +1,17 @@
 package ar.com.laboratory.interceptor;
 
+import ar.com.laboratory.config.SensitiveDataConfig;
 import ar.com.laboratory.util.annotations.CommonLogging;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.annotation.Priority;
+import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Interceptor
@@ -29,18 +32,22 @@ public class CommonLoggingInterceptor {
     @ConfigProperty(name = "common.logging.exception.active", defaultValue = "true")
     String exceptionLoggingActive;
 
+    @Inject
+    SensitiveDataConfig sensitiveDataConfig;
+
     @AroundInvoke
     public Object logMethodInvocation(InvocationContext context) throws Exception {
+        var sensitiveData = sensitiveDataConfig.getSensitiveDataList();
         long startTime = System.currentTimeMillis();
         if (Boolean.parseBoolean(active)) {
             String className = context.getMethod().getDeclaringClass().getName();
             Object[] params = context.getParameters();
             Parameter[] parameters = context.getMethod().getParameters();
-            beforeLogging(context, className, params, parameters);
+            beforeLogging(context, className, params, parameters,sensitiveData);
             try {
                 Object result = context.proceed();
                 long endTime = System.currentTimeMillis();
-                afterLogging(context, className, result, endTime - startTime);
+                afterLogging(context, className, result, endTime - startTime, sensitiveData);
                 return result;
             } catch (Exception e) {
                 long endTime = System.currentTimeMillis();
@@ -62,7 +69,7 @@ public class CommonLoggingInterceptor {
         throw e;
     }
 
-    private void afterLogging(InvocationContext context, String className, Object result, long duration) {
+    private void afterLogging(InvocationContext context, String className, Object result, long duration, List<String> sensitiveData ) {
         if (afterLoggingActive.equals("true")) {
             LOGGER.info("------------- RESPONSE ----------------");
             LOGGER.info("Class: " + className);
@@ -77,7 +84,8 @@ public class CommonLoggingInterceptor {
         }
     }
 
-    private void beforeLogging(InvocationContext context, String className, Object[] params, Parameter[] parameters) {
+    private void beforeLogging(InvocationContext context, String className, Object[] params, Parameter[] parameters, List<String> sensitiveData) {
+        LOGGER.info("Sensitive data: " + sensitiveData.toString());
         if (beforeLoggingActive.equals("true")) {
             LOGGER.info("------------- REQUEST ----------------");
             LOGGER.info("Class: " + className);
