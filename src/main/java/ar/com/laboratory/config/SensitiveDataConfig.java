@@ -5,6 +5,7 @@ import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
 public class SensitiveDataConfig {
     private static final Logger LOGGER = Logger.getLogger(SensitiveDataConfig.class.getName());
 
-    @ConfigProperty(name = "list.of.sensitive.data", defaultValue = "")
+    @ConfigProperty(name = "list.of.sensitive.data", defaultValue = "some")
     String sensitiveData;
 
     private List<String> sensitiveDataList;
@@ -22,10 +23,10 @@ public class SensitiveDataConfig {
     @PostConstruct
     public void init() {
         if (Objects.nonNull(sensitiveData) && !sensitiveData.isEmpty()) {
-            LOGGER.info("Sensitive data list: " + sensitiveData);
+            LOGGER.info("Sensitive data: " + sensitiveData);
             sensitiveDataList = Arrays.asList(sensitiveData.split(","));
         } else {
-            sensitiveDataList = null;
+           sensitiveDataList = Collections.emptyList();
         }
     }
 
