@@ -2,10 +2,14 @@ package ar.com.laboratory.controller;
 
 
 import ar.com.laboratory.domain.dto.PersonaDTO;
+import ar.com.laboratory.domain.model.ErrorResponse;
 import ar.com.laboratory.service.PersonaService;
+import ar.com.laboratory.util.Constants;
 import ar.com.laboratory.util.annotations.CommonLogging;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -14,6 +18,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Tag(name = "Persona Resource", description = "Persona Resource")
 @Path("/api/v1/personas")
@@ -39,7 +44,32 @@ public class PersonaResource {
     @APIResponse(
             responseCode = "200",
             description = "Personas encontradas",
-            content = @Content(mediaType = "application/json")
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = PersonaDTO.class),
+                    examples = @ExampleObject(name = "PersonaDTO", value = Constants.ARRAY_RESPONSE_PERSONADTO
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = Constants.ERROR_CODE_500,
+            description = Constants.ERROR_DESCRIPTION_500,
+            content = @Content(
+                    mediaType = Constants.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.OBJECT, implementation = ErrorResponse.class),
+                    examples = @ExampleObject(name = "ErrorResponse", value = Constants.ERROR_RESPONSE_500
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "204",
+            description = "No content",
+            content = @Content(
+                    mediaType = Constants.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.OBJECT, implementation = Void.class),
+                    examples = @ExampleObject(name = "PersonDTO", value = ""
+                    )
+            )
     )
     @GET
     @Produces(MediaType.APPLICATION_JSON)
