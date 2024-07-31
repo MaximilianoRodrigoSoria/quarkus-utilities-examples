@@ -169,6 +169,11 @@
             <artifactId>jaxb-core</artifactId>
             <version>2.3.0.1</version>
         </dependency>
+        <!-- QUARKUS HIBERNATE VALIDATOR-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-validator</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

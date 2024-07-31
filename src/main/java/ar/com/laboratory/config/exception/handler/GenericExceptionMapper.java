@@ -5,6 +5,7 @@ import ar.com.laboratory.config.exception.IncompleteFlowException;
 import ar.com.laboratory.config.exception.PersonaNotFoundException;
 import ar.com.laboratory.domain.model.ErrorResponse;
 import ar.com.laboratory.domain.model.ErrorsResponse;
+import org.hibernate.PropertyValueException;
 
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
