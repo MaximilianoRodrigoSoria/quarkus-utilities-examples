@@ -1,5 +1,6 @@
 package ar.com.laboratory.controller;
 
+
 import ar.com.laboratory.config.exception.CustomConflictException;
 import ar.com.laboratory.domain.dto.PersonaDTO;
 import ar.com.laboratory.domain.dto.PersonaResponse;
@@ -9,6 +10,9 @@ import ar.com.laboratory.service.PersonaService;
 import ar.com.laboratory.util.JsonHandler;
 import ar.com.laboratory.util.XmlHandler;
 import ar.com.laboratory.util.annotations.CommonLogging;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -31,6 +35,7 @@ public class ExampleResource {
 
     @Inject
     JsonHandler jsonHandler;
+     private final Tracer tracer = GlobalOpenTelemetry.getTracer("Example resource");
 
     @Inject
     XmlHandler xmlHandler;
@@ -56,6 +61,10 @@ public class ExampleResource {
     @Path("/json")
     @Produces(MediaType.APPLICATION_JSON)
     public String hello() throws Exception {
+
+
+
+
         PersonaDTO persona = getPersona("Juan", "Perez", 30);
         String json = jsonHandler.toJson(persona);
         LOGGER.info("Persona to JSON: " + json);
