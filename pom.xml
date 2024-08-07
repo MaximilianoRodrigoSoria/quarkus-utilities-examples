@@ -181,6 +181,24 @@
             <artifactId>quarkus-opentelemetry</artifactId>
         </dependency>
 
+        <!-- OpenTelemetry OTLP Exporter -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+            <version>1.34.1</version>
+        </dependency>
+
+<!--        &lt;!&ndash; OpenTelemetry SDK dependency &ndash;&gt;-->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+        </dependency>
+
+<!--        &lt;!&ndash; OpenTelemetry API dependency &ndash;&gt;-->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+        </dependency>
 
     </dependencies>
     <build>

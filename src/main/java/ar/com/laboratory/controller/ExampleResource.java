@@ -33,9 +33,11 @@ import java.util.logging.Logger;
 @Path("/api/v1/example")
 public class ExampleResource {
 
+    private final Tracer tracer = GlobalOpenTelemetry.getTracer("Example Resource");
+
+
     @Inject
     JsonHandler jsonHandler;
-     private final Tracer tracer = GlobalOpenTelemetry.getTracer("Example resource");
 
     @Inject
     XmlHandler xmlHandler;
@@ -60,10 +62,10 @@ public class ExampleResource {
     @GET
     @Path("/json")
     @Produces(MediaType.APPLICATION_JSON)
-    public String hello() throws Exception {
+    public String json() throws Exception {
 
 
-
+        Span span = tracer.spanBuilder("json").startSpan();
 
         PersonaDTO persona = getPersona("Juan", "Perez", 30);
         String json = jsonHandler.toJson(persona);
