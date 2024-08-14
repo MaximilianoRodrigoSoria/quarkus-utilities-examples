@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "ANY",
+    "urlPattern": ".*"
+  },
+  "response": {
+    "proxyBaseUrl": "https://sandbox-us-api.experian.com"
+  },
+  "priority":  99
+}

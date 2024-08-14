@@ -25,6 +25,7 @@ public class TelefonoResource {
     @GET
     @Path("/info/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+
     public Response obtenerTelefono(@PathParam("id") int id) throws MaxRetriesException {
         var telefonoResponse = telefonoInfoService.getTelefonoInfo(id);
         return Response.ok(telefonoResponse).build();

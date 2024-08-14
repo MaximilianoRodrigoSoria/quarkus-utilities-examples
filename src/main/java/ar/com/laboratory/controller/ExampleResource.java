@@ -7,9 +7,11 @@ import ar.com.laboratory.domain.dto.PersonaResponse;
 import ar.com.laboratory.domain.model.FullResponse;
 import ar.com.laboratory.service.AggregatorService;
 import ar.com.laboratory.service.PersonaService;
+import ar.com.laboratory.util.AES256EncrypterUtil;
 import ar.com.laboratory.util.JsonHandler;
 import ar.com.laboratory.util.XmlHandler;
 import ar.com.laboratory.util.annotations.CommonLogging;
+import ar.com.laboratory.util.annotations.EncryptFields;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
@@ -21,10 +23,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.logging.Logger;
@@ -48,6 +47,9 @@ public class ExampleResource {
     @Inject
     AggregatorService aggregatorService;
 
+    @Inject
+    AES256EncrypterUtil aes256EncrypterUtil;
+
     @ConfigProperty(name = "greeting")
     private String greeting;
 
@@ -69,6 +71,11 @@ public class ExampleResource {
 
         PersonaDTO persona = getPersona("Juan", "Perez", 30);
         String json = jsonHandler.toJson(persona);
+
+        var encrypterNombre = aes256EncrypterUtil.encrypt(persona.getNombre());
+        LOGGER.info("Nombre encryptado:" + encrypterNombre);
+        var desEncrypterNombre = aes256EncrypterUtil.decrypt(encrypterNombre);
+        LOGGER.info("Nombre desencryptado: "+desEncrypterNombre);
         LOGGER.info("Persona to JSON: " + json);
         return json;
     }
@@ -148,5 +155,16 @@ public class ExampleResource {
     public Response fullResponse() {
         FullResponse fullResponse = aggregatorService.aggregateResponses().join();
         return Response.ok(fullResponse).build();
+    }
+
+    @POST
+    @Path("/persona")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @CommonLogging
+    @EncryptFields
+    public Response createPersona(PersonaDTO personaDTO) {
+
+        return Response.ok(personaDTO).build();
     }
 }

@@ -1,9 +1,12 @@
 package ar.com.laboratory.util;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.context.ApplicationScoped;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -23,27 +26,31 @@ public class AES256EncrypterUtil {
     private static final int GCM_IV_LENGTH = 12;
     private static final int AES_KEY_SIZE = 256;
 
+    @ConfigProperty(name = "aes.256.key")
+    private String aes_key;
+
     /**
      * Generates a secret AES key.
      *
      * @return the generated SecretKey
      * @throws Exception if an error occurs during key generation
      */
-    public static SecretKey generateAESKey() throws Exception {
+    public  SecretKey generateAESKey() throws Exception {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(AES_ALGORITHM);
-        keyGenerator.init(AES_KEY_SIZE);
-        return keyGenerator.generateKey();
+        byte[] decodedKey = Base64.getDecoder().decode(aes_key);
+        return new SecretKeySpec(decodedKey, 0, decodedKey.length, AES_ALGORITHM);
     }
 
     /**
      * Encrypts a string using AES 256.
      *
      * @param plainText the plain text to encrypt
-     * @param secretKey the secret key for encryption
+
      * @return the encrypted text in Base64 encoding
      * @throws Exception if an error occurs during encryption
      */
-    public static String encrypt(String plainText, SecretKey secretKey) throws Exception {
+    public  String encrypt(String plainText) throws Exception {
+        SecretKey secretKey = generateAESKey();
         Cipher cipher = Cipher.getInstance(AES_CIPHER_ALGORITHM);
         byte[] iv = new byte[GCM_IV_LENGTH];
         SecureRandom random = new SecureRandom();
@@ -62,11 +69,11 @@ public class AES256EncrypterUtil {
      * Decrypts a string using AES 256.
      *
      * @param encryptedText the encrypted text in Base64 encoding
-     * @param secretKey the secret key for decryption
      * @return the decrypted plain text
      * @throws Exception if an error occurs during decryption
      */
-    public static String decrypt(String encryptedText, SecretKey secretKey) throws Exception {
+    public  String decrypt(String encryptedText) throws Exception {
+        SecretKey secretKey= generateAESKey();
         byte[] encryptedWithIv = Base64.getDecoder().decode(encryptedText);
         byte[] iv = new byte[GCM_IV_LENGTH];
         byte[] encryptedBytes = new byte[encryptedWithIv.length - GCM_IV_LENGTH];

@@ -1,0 +1,27 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/oauth2/v1/token",
+    "headers": {
+      "accept": {
+        "matches": "application/json"
+      },
+      "content-type": {
+        "matches": "application/json"
+      },
+      "client_id": {
+        "equalTo": "23"
+      },
+      "grant_type": {
+        "equalTo": "refresh_token"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "telefono_info_response.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

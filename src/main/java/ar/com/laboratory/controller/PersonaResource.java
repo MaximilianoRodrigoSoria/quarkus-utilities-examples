@@ -6,6 +6,7 @@ import ar.com.laboratory.domain.model.ErrorResponse;
 import ar.com.laboratory.service.PersonaService;
 import ar.com.laboratory.util.Constants;
 import ar.com.laboratory.util.annotations.CommonLogging;
+import ar.com.laboratory.util.annotations.EncryptFields;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -134,6 +135,7 @@ public class PersonaResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @CommonLogging
+    @EncryptFields
     public Response create(@Valid PersonaDTO personaDTO) {
         var persona = personaService.created(personaDTO);
         return Response.status(Response.Status.CREATED).entity(persona).build();
